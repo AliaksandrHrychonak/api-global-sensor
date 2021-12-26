@@ -1,6 +1,6 @@
 const userService = require('../service/user-service');
 const userModel = require('../models/user-model');
-const User = require("../models/user-model")
+const mailService = require('../service/mail-service');
 
 class UserController {
 
@@ -25,6 +25,16 @@ class UserController {
             next(e);
         }
     }
+
+    async callbackInfo(req, res, next) {
+      try {
+          const {fullname, message, email} = req.body
+          await mailService.sendMail(email, fullname, message);
+          return res.status(200).send({ message: 'ok' });
+      } catch (e) {
+          next(e);
+      }
+  }
 
     async logout(req, res, next) {
         try {

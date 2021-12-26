@@ -30,6 +30,24 @@ class MailService {
         })
     }
 
+    async sendMail(email, fullname, message) {
+        await this.transporter.sendMail({
+            from: process.env.SMTP_USER,
+            to: "support@globalsensor.pro",
+            subject: 'req' + process.env.CLIENT_URL,
+            text: '',
+            html:
+                `
+                    <div>
+                        <h1>info</h1>
+                        <p>${email}</p>
+                        <p>${fullname}</p>
+                        <p>${message}</p>
+                    </div>
+                `
+        })
+    }
+
     async sendForgotPasswordMail(to, link) {
       await this.transporter.sendMail({
         from: process.env.SMTP_USER,

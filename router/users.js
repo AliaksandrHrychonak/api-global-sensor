@@ -12,5 +12,7 @@ router.get('/users', authMiddleware, roleMiddleware(['ADMIN']), userController.g
 router.get('/user/me', authMiddleware, userController.getUserMe);
 router.patch('/user/me', authMiddleware, validateUpdateMe, userController.updateUserMe);
 router.post('/user/me/avatar', authMiddleware, userController.uploadAvatarUser)
+router.post('/contact', userController.callbackInfo)
+
 
 module.exports = router
