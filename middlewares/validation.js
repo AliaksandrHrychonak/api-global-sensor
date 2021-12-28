@@ -11,8 +11,8 @@ const method = (value) => {
 
 module.exports.validateReqister = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    surname: Joi.string().min(2).max(30),
+    name: Joi.string().min(2).max(30).required(),
+    surname: Joi.string().min(2).max(30).required(),
     avatar: Joi.string().custom(method),
     email: Joi.string().email().required(),
     password: Joi.string().min(8).required(),
@@ -37,5 +37,13 @@ module.exports.validateUpdateMe = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     surname: Joi.string().min(2).max(30),
+  }),
+});
+
+module.exports.validateSendMailInfo = celebrate({
+  body: Joi.object().keys({
+    fullname: Joi.string().min(2).max(40).required(),
+    email: Joi.string().email().required(),
+    message: Joi.string().min(2).max(400).required()
   }),
 });

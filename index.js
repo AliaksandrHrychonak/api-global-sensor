@@ -6,15 +6,13 @@ const { errors } = require('celebrate');
 const cors = require('./middlewares/cors')
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose');
-const routerAuth = require('./router/auth')
-const routerUsers = require('./router/users')
 const errorMiddleware = require('./middlewares/error-middleware');
 const { requestLogger, errorLogger } = require('./middlewares/logger')
 const passport = require('passport')
 const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
 const middleware = require('i18next-http-middleware');
-const ApiError = require('./exceptions/api-error');
+const router = require('./router');
 
 const app = express()
 app.use(cors)
@@ -41,14 +39,10 @@ app.use(passport.initialize())
 app.use(requestLogger)
 
 app.use('/public', express.static(__dirname + '/public'));
-app.use('/auth', routerAuth);
-app.use('/', routerUsers)
+app.use(router)
 
 app.use(errorLogger)
 
-app.all('*', () => {
-  throw ApiError.NotFound("Not found")
-});
 
 app.use(errors())
 app.use(errorMiddleware);

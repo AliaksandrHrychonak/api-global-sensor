@@ -18,40 +18,40 @@ const ApiError = require('../exceptions/api-error');
 const { SECRET_RESET_USER, API_URL } = process.env
 
 class UserService {
-    async registration(req, email, password) {
-        const candidate = await UserModel.findOne({email})
-        if (candidate) {
-            throw ApiError.BadRequest(req.t("user_is_exists"))
-        }
-        
-        const hash = await bcrypt.hash(password, 10);
-        const activationLink = uuid.v4();
-        const userRole = await RoleModel.findOne({ value: "USER" })
-        const user = await UserModel.create({ email, password: hash, activationLink, roles: [userRole.value] })
+    async registration(req, name, surname, email, password) {
+      const candidate = await UserModel.findOne({email})
+      if (candidate) {
+        throw ApiError.BadRequest(req.t("user_is_exists"))
+      }
 
-        await mailService.sendActivationMail(email, `${API_URL}/auth/activate/${activationLink}`);
+      const hash = await bcrypt.hash(password, 10);
+      const activationLink = uuid.v4();
+      const userRole = await RoleModel.findOne({ value: "USER" })
+      const user = await UserModel.create({ name, surname, email, password: hash, activationLink, roles: [userRole.value] })
 
-        const userDto = new UserDto(user);
-        const tokens = tokenService.generateTokens({...userDto});
-        await tokenService.saveToken(userDto.id, tokens.refreshToken);
-        return {...tokens, user: userDto}
+        // await mailService.sendActivationMail(email, `${API_URL}/auth/activate/${activationLink}`);
+
+      const userDto = new UserDto(user);
+      const tokens = tokenService.generateTokens({...userDto});
+      await tokenService.saveToken(userDto.id, tokens.refreshToken);
+      return {...tokens, user: userDto}
     }
 
     async activate(req, activationLink) {
-        const user = await UserModel.findOne({activationLink})
-        if (!user) {
-            throw ApiError.BadRequest(req.t("invalid_activation_link"))
-        }
-        user.isActivated = true;
-        await user.save();
+      const user = await UserModel.findOne({activationLink})
+      if (!user) {
+        throw ApiError.BadRequest(req.t("invalid_activation_link"))
+      }
+      user.isActivated = true;
+      await user.save();
     }
 
     async login(req, email, password) {
-        const user = await UserModel.findUserByCredentials(email, password)
-        const userDto = new UserDto(user);
-        const tokens = tokenService.generateTokens({...userDto});
-        await tokenService.saveToken(userDto.id, tokens.refreshToken);
-        return {...tokens, user: userDto}
+      const user = await UserModel.findUserByCredentials(email, password)
+      const userDto = new UserDto(user);
+      const tokens = tokenService.generateTokens({...userDto});
+      await tokenService.saveToken(userDto.id, tokens.refreshToken);
+      return {...tokens, user: userDto}
     }
 
     async logout(refreshToken) {
@@ -88,16 +88,17 @@ class UserService {
     }
 
     async getAllUsers() {
-        const users = await UserModel.find();
-        return users;
+      const users = await UserModel.find();
+      return users;
     }
 
     async getUserMe(req, id) {
       const user = await UserModel.findById(id);
+      const userDto = new UserDto(user);
       if(!user) {
         throw ApiError.BadRequest(req.t("user_not_found_exception"))
       }
-      return user;
+      return userDto;
     }
 
     async updateUserMe(req, id, body) {
@@ -105,7 +106,8 @@ class UserService {
       if(!userUpdate) {
         throw ApiError.BadRequest(req.t("user_not_found_exception"))
       }
-      return userUpdate
+      const user = new UserDto(userUpdate);
+      return user
     }
 
     async forgotPassword(req, user) {

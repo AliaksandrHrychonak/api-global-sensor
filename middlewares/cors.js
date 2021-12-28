@@ -1,8 +1,6 @@
 const allowedCors = [
   'http://globalsensor.pro',
   'https://globalsensor.pro',
-  'https://localhost:5000',
-  'http://localhost:5000',
   'https://localhost:3000',
   'http://localhost:3000',
 ];
@@ -22,6 +20,5 @@ module.exports = (req, res, next) => {
     res.header('Access-Control-Allow-Headers', requestHeaders);
     res.status(200).send({ message: 'OK' });
   }
-
   next();
 };

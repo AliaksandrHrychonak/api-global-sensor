@@ -10,13 +10,13 @@ const isEmail = require('validator/lib/isEmail')
 const UserSchema = new Schema({
   name: {
     type: String,
-    default: 'name',
+    default: 'Name',
     minlength: 2,
     maxlength: 30,
   },
   surname: {
     type: String,
-    default: 'surname',
+    default: 'Surname',
     minlength: 2,
     maxlength: 30
   },
@@ -26,16 +26,15 @@ const UserSchema = new Schema({
     unique: true,
     validate: {
       validator: (v) => isEmail(v),
-      message: 'not email',
+      message: 'Validation ERR!',
     },
   },
   avatar: {
     type: String,
-    // default: `${process.env.API_URL}/public/avatars/defaultAvatars.png`,
-    default: "https://images.unsplash.com/photo-1639269589043-a2ad517e238e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+    default: "https://api-global-sensor.monster/public/avatars/user.png",
     validate: {
       validator: (link) => validator.isURL(link, { require_protocol: true }),
-      message: 'not link',
+      message: 'Validation ERR!',
     },
   },
   password: {
@@ -76,12 +75,12 @@ UserSchema.statics.findUserByCredentials = function а(email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw ApiError.BadRequest('Пользователь с таким email не найден')
+        throw ApiError.BadRequest('User not found!')
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw ApiError.BadRequest('Неправильные почта или пароль');
+            throw ApiError.BadRequest('Error Access');
           }
           return user;
         });

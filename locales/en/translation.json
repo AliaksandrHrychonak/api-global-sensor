@@ -1,5 +1,6 @@
 {
   "user_create_success": "User created successfully!",
+  "user_data_err": "Invalid data transmitted!",
   "user_not_found_exception": "User is not found!",
   "user_is_exists" : "User already exists!",
   "invalid_activation_link": "Incorrect activation link!",

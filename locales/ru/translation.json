@@ -1,5 +1,6 @@
 {
   "user_create_success": "Пользователь успешно создан!",
+  "user_data_err": "Переданы некорректные данные!",
   "user_not_found_exception": "Пользователь не найден!",
   "user_is_exists" : "Пользователь уже существует!",
   "invalid_activation_link": "Некорректная ссылка активации!",
