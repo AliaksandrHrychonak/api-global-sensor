@@ -17,10 +17,10 @@ class UserController {
       } = req.body;
       const user = await userService.registration(req, name, surname, email, password);
       res.cookie('refreshToken', user.refreshToken, {
+        path: '/',
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: false,
-
+        sameSite: true,
       })
       return res.status(201).send(user);
     } catch (err) {
@@ -45,10 +45,10 @@ class UserController {
       } = req.body;
       const user = await userService.login(req, email, password);
       res.cookie('refreshToken', user.refreshToken, {
+        path: '/',
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: false,
-
+        sameSite: true,
       })
       return res.status(200).send(user)
     } catch (err) {
@@ -113,10 +113,10 @@ class UserController {
       } = req.cookies;
       const userData = await userService.refresh(req, refreshToken);
       res.cookie('refreshToken', userData.refreshToken, {
+        path: '/',
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: false,
-
+        sameSite: true,
       })
       return res.json(userData);
     } catch (e) {
@@ -129,10 +129,10 @@ class UserController {
       const id = req.user.id
       const user = await userService.googleVerify(req, id)
       res.cookie('refreshToken', user.refreshToken, {
+        path: '/',
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: false,
-
+        sameSite: true,
       })
       return res.status(201).send(user);
     } catch (e) {
@@ -207,9 +207,10 @@ class UserController {
       const token = req.params.token
       const userData = await userService.resetPassword(req, token, req.body)
       res.cookie('refreshToken', userData.refreshToken, {
+        path: '/',
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: false,
+        sameSite: true,
       })
       return res.status(200).send({
         message: req.t("reset_password_done")
