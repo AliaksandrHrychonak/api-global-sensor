@@ -18,7 +18,10 @@ module.exports = (req, res, next) => {
   if (method === 'OPTIONS') {
     res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
     res.header('Access-Control-Allow-Headers', requestHeaders);
-    res.header('Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Origin');
+    res.header('X-Requested-With')
+    res.header('Accept')
+    res.header('Content-Type')
     res.status(200).send({ message: 'OK' });
   }
   next();
