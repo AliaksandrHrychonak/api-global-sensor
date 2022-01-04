@@ -9,9 +9,19 @@ class UserController {
       if (!req.body) {
         throw ApiError.BadRequest(req.t("user_data_err"))
       }
-      const { name, surname, email, password } = req.body;
+      const {
+        name,
+        surname,
+        email,
+        password
+      } = req.body;
       const user = await userService.registration(req, name, surname, email, password);
-      res.cookie('refreshToken', user.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false })
+      res.cookie('refreshToken', user.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: false,
+        secure: true,
+      })
       return res.status(201).send(user);
     } catch (err) {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
@@ -29,11 +39,16 @@ class UserController {
       if (!req.body) {
         throw ApiError.BadRequest(req.t("user_data_err"))
       }
-      const { email, password } = req.body;
+      const {
+        email,
+        password
+      } = req.body;
       const user = await userService.login(req, email, password);
       res.cookie('refreshToken', user.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: false
+        httpOnly: true,
+        sameSite: false,
+        secure: true,
       })
       return res.status(200).send(user)
     } catch (err) {
@@ -50,9 +65,15 @@ class UserController {
       if (!req.body) {
         throw ApiError.BadRequest(req.t("user_data_err"))
       }
-      const { fullname, message, email } = req.body
+      const {
+        fullname,
+        message,
+        email
+      } = req.body
       await mailService.sendMail(email, fullname, message);
-      return res.status(200).send({ message: 'OK'});
+      return res.status(200).send({
+        message: 'OK'
+      });
     } catch (err) {
       if (err.name === 'ValidationError') {
         next(ApiError.NotFoundError(req.t("user_data_err")));
@@ -64,7 +85,9 @@ class UserController {
 
   async logout(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
+      const {
+        refreshToken
+      } = req.cookies;
       const token = await userService.logout(refreshToken);
       res.clearCookie('refreshToken');
       return res.json(token);
@@ -91,7 +114,9 @@ class UserController {
       const userData = await userService.refresh(req, refreshToken);
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: false
+        httpOnly: true,
+        sameSite: false,
+        secure: true,
       })
       return res.json(userData);
     } catch (e) {
@@ -103,7 +128,12 @@ class UserController {
     try {
       const id = req.user.id
       const user = await userService.googleVerify(req, id)
-      res.cookie('refreshToken', user.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false })
+      res.cookie('refreshToken', user.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: false,
+        secure: true,
+      })
       return res.status(201).send(user);
     } catch (e) {
       next(e)
@@ -137,7 +167,9 @@ class UserController {
       if (!req.body) {
         throw ApiError.BadRequest(req.t("user_data_err"))
       }
-      const user = await userService.updateUserMe(req, req.user.id, {...req.body})
+      const user = await userService.updateUserMe(req, req.user.id, {
+        ...req.body
+      })
       return res.status(200).send(user)
     } catch (err) {
       if (err.name === 'ValidationError') {
@@ -157,7 +189,9 @@ class UserController {
         email
       })
       if (!user) {
-        return res.status(400).send({ message: "User not found" })
+        return res.status(400).send({
+          message: "User not found"
+        })
       }
       await userService.forgotPassword(req, user)
       return res.status(200).send({
@@ -174,7 +208,9 @@ class UserController {
       const userData = await userService.resetPassword(req, token, req.body)
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: false
+        httpOnly: true,
+        sameSite: false,
+        secure: true,
       })
       return res.status(200).send({
         message: req.t("reset_password_done")
