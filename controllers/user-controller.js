@@ -19,8 +19,8 @@ class UserController {
       res.cookie('refreshToken', user.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: false,
-        sameSite: "none"
+        secure: true,
+        sameSite: "None"
       })
       return res.status(201).send(user);
     } catch (err) {
@@ -47,8 +47,8 @@ class UserController {
       res.cookie('refreshToken', user.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: false,
-        sameSite: "none"
+        secure: true,
+        sameSite: "None"
       })
       return res.status(200).send(user)
     } catch (err) {
@@ -115,8 +115,8 @@ class UserController {
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: false,
-        sameSite: "none"
+        secure: true,
+        sameSite: "None"
       })
       return res.json(userData);
     } catch (e) {
@@ -131,8 +131,8 @@ class UserController {
       res.cookie('refreshToken', user.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: false,
-        sameSite: "none"
+        secure: true,
+        sameSite: "None"
       })
       return res.status(201).send(user);
     } catch (e) {
@@ -209,8 +209,8 @@ class UserController {
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: false,
-        sameSite: "none"
+        secure: true,
+        sameSite: "None"
       })
       return res.status(200).send({
         message: req.t("reset_password_done")
