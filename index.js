@@ -3,7 +3,7 @@ const PORT = process.env.PORT || 5000;
 const express = require('express');
 const helmet = require("helmet");
 const { errors } = require('celebrate');
-const cors = require('./middlewares/cors')
+const cors = require('cors');
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose');
 const errorMiddleware = require('./middlewares/error-middleware');
@@ -15,8 +15,18 @@ const middleware = require('i18next-http-middleware');
 const router = require('./router');
 
 const app = express()
-app.use(cors)
 app.use(helmet())
+app.use(cors({
+  credentials: true,
+  origin: [
+    'http://globalsensor.pro',
+    'https://globalsensor.pro',
+    'https://localhost:3000',
+    'http://localhost:3000',
+    'http://192.168.100.8:3000',
+  ]
+}));
+app.use(cookieParser());
 require("./service/passport");
 
 i18next
@@ -33,8 +43,6 @@ i18next
 
 app.use(middleware.handle(i18next));
 app.use(express.json());
-app.use(cookieParser());
-
 app.use(passport.initialize())
 app.use(requestLogger)
 
