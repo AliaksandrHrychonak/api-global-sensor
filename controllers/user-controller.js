@@ -20,7 +20,7 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: false,
-        secure: true,
+
       })
       return res.status(201).send(user);
     } catch (err) {
@@ -48,7 +48,7 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: false,
-        secure: true,
+
       })
       return res.status(200).send(user)
     } catch (err) {
@@ -116,7 +116,7 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: false,
-        secure: true,
+
       })
       return res.json(userData);
     } catch (e) {
@@ -132,7 +132,7 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: false,
-        secure: true,
+
       })
       return res.status(201).send(user);
     } catch (e) {
@@ -210,7 +210,6 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: false,
-        secure: true,
       })
       return res.status(200).send({
         message: req.t("reset_password_done")
