@@ -3,6 +3,7 @@ const allowedCors = [
   'https://globalsensor.pro',
   'https://localhost:3000',
   'http://localhost:3000',
+  'http://192.168.100.8:3000',
 ];
 
 module.exports = (req, res, next) => {

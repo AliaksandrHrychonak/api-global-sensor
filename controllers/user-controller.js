@@ -11,7 +11,7 @@ class UserController {
       }
       const { name, surname, email, password } = req.body;
       const user = await userService.registration(req, name, surname, email, password);
-      res.cookie('refreshToken', user.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+      res.cookie('refreshToken', user.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false })
       return res.status(201).send(user);
     } catch (err) {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
@@ -33,7 +33,7 @@ class UserController {
       const user = await userService.login(req, email, password);
       res.cookie('refreshToken', user.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true
+        httpOnly: false
       })
       return res.status(200).send(user)
     } catch (err) {
@@ -91,7 +91,7 @@ class UserController {
       const userData = await userService.refresh(req, refreshToken);
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true
+        httpOnly: false
       })
       return res.json(userData);
     } catch (e) {
@@ -102,15 +102,9 @@ class UserController {
   async googleVerify(req, res, next) {
     try {
       const id = req.user.id
-      const userData = await userService.googleVerify(req, id)
-      res.cookie('refreshToken', userData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true
-      })
-      return res.status(201).send({
-        message: req.t("user_create_success"),
-        userData
-      });
+      const user = await userService.googleVerify(req, id)
+      res.cookie('refreshToken', user.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false })
+      return res.status(201).send(user);
     } catch (e) {
       next(e)
     }
@@ -180,7 +174,7 @@ class UserController {
       const userData = await userService.resetPassword(req, token, req.body)
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true
+        httpOnly: false
       })
       return res.status(200).send({
         message: req.t("reset_password_done")
