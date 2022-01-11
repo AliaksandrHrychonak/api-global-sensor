@@ -6,13 +6,14 @@ const roleMiddleware = require('../middlewares/role-middleware');
 
 const {
   validateUpdateMe,
-  validateSendMailInfo
+  validateSendMailInfo,
+  forgotPassword
 } = require('../middlewares/validation')
 
 router.get('/users', authMiddleware, roleMiddleware(['ADMIN']), userController.getUsers);
 router.get('/user/me', authMiddleware, userController.getUserMe);
 router.patch('/user/me', authMiddleware, validateUpdateMe, userController.updateUserMe);
-router.patch('/user/me/secret', authMiddleware, forgotPassword, userController.resetPasswordUser)
+router.patch('/user/me/secret', authMiddleware, forgotPassword, userController.updateVerifyUserPassword)
 router.post('/user/me/avatar', authMiddleware, userController.uploadAvatarUser)
 router.post('/contact', validateSendMailInfo, userController.callbackInfo)
 module.exports = router
