@@ -182,43 +182,67 @@ class UserController {
     }
   }
 
-  async forgotPassword(req, res, next) {
+  async updateVerifyUserPassword(req, res, next) {
     try {
-      const email = req.body.email
-      const user = await userModel.findOne({
-        email
-      })
-      if (!user) {
-        return res.status(400).send({
-          message: "User not found"
-        })
+      if (!req.body) {
+        throw ApiError.BadRequest(req.t("user_data_err"))
       }
-      await userService.forgotPassword(req, user)
-      return res.status(200).send({
-        message: req.t("reset_link_send")
-      });
-    } catch (e) {
-      next(e);
-    }
-  }
-
-  async resetPasswordUser(req, res, next) {
-    try {
-      const token = req.params.token
-      const userData = await userService.resetPassword(req, token, req.body)
+      const user = userService.updatePassword(req.user.id, req.body)
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         secure: true,
         sameSite: "None"
       })
-      return res.status(200).send({
-        message: req.t("reset_password_done")
-      });
-    } catch (e) {
-      next(e)
+      return res.status(200).send(user);
+    } catch (err) {
+      if (err.name === 'ValidationError') {
+        next(ApiError.BadRequestError(req.t("user_data_err")));
+      } else if (err.code === 11000) {
+        next(ApiError.NotAuthorization("409"));
+      } else {
+        next(err);
+      }
     }
   }
+
+  // async forgotPassword(req, res, next) {
+  //   try {
+  //     const email = req.body.email
+  //     const user = await userModel.findOne({
+  //       email
+  //     })
+  //     if (!user) {
+  //       return res.status(400).send({
+  //         message: "User not found"
+  //       })
+  //     }
+  //     await userService.forgotPassword(req, user)
+  //     return res.status(200).send({
+  //       message: req.t("reset_link_send")
+  //     });
+  //   } catch (e) {
+  //     next(e);
+  //   }
+  // }
+
+  // async resetPasswordUser(req, res, next) {
+  //   try {
+  //     const token = req.params.token
+  //     const userData = await userService.resetPassword(req, token, req.body)
+  //     res.cookie('refreshToken', userData.refreshToken, {
+  //       maxAge: 30 * 24 * 60 * 60 * 1000,
+  //       httpOnly: true,
+  //       secure: true,
+  //       sameSite: "None"
+  //     })
+  //     return res.status(200).send({
+  //       message: req.t("reset_password_done")
+  //     });
+  //   } catch (e) {
+  //     next(e)
+  //   }
+  // }
 
   async uploadAvatarUser(req, res, next) {
     try {
