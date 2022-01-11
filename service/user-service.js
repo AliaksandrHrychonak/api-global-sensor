@@ -102,7 +102,7 @@ class UserService {
     }
 
     async updateUserMe(req, id, body) {
-      const userUpdate = await UserModel.findByIdAndUpdate(id, body, { runValidators: true, new: true })
+      const userUpdate = await UserModel.findOneAndUpdate(id, body, { runValidators: true, new: true })
       if(!userUpdate) {
         throw ApiError.BadRequest(req.t("user_not_found_exception"))
       }
@@ -152,7 +152,7 @@ class UserService {
     async uploadAvatar(req, res) {
 
       await upload(req, res);
-      if (req.file == undefined) {
+      if (!req.file) {
         throw ApiError.BadRequest(req.t("not_upload_file"))
       }
       return

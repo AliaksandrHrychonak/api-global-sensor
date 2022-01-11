@@ -224,15 +224,12 @@ class UserController {
     try {
       await userService.uploadAvatar(req, res)
       const body = {
-        avatar: `${process.env.API_URL}public/avatars/${req.file.filename}`
+        avatar: `${process.env.API_URL}/public/avatars/${req.file.filename}`
       }
-      const updateUser = await userService.updateUserMe(req, req.user.id, {
+      const user = await userService.updateUserMe(req, req.user.id, {
         ...body
       })
-      return res.status(200).send({
-        message: req.t("user_update"),
-        updateUser
-      })
+      return res.status(200).send(user)
     } catch (e) {
       next(e)
     }

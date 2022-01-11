@@ -9,6 +9,7 @@ let storage = multer.diskStorage({
     cb(null, "public/avatars");
   },
   filename: (req, file, cb) => {
+    console.log(file);
     cb(null, `${Date.now()}_${file.originalname}`)
   },
 });
@@ -25,7 +26,7 @@ let uploadFile = multer({
     }
     cb(null, true)
   }
-}).single("File");
+}).single("file");
 
 let uploadFileMiddleware = util.promisify(uploadFile);
 module.exports = uploadFileMiddleware;
