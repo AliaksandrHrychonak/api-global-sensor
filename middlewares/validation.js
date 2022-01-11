@@ -28,6 +28,7 @@ module.exports.validateLogin = celebrate({
 
 module.exports.forgotPassword= celebrate({
   body: Joi.object().keys({
+    oldPassword: Joi.string().required().min(8),
     newPassword: Joi.string().required().min(8),
     verifyPassword: Joi.string().required().min(8),
   }),
