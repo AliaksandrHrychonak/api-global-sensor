@@ -6,7 +6,9 @@ const JWT_REFRESH_SECRET = 'jwt-refresh-secret-key';
 const API_URL = 'http://localhost:5000';
 const CLIENT_URL = 'https://globalsensor.pro';
 const SECRET_RESET_USER = '12345678';
-const COOKIES_CONFIG = { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true };
+const COOKIES_CONFIG = {
+  maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: 'None',
+};
 module.exports = {
   PORT,
   DB_URL,
