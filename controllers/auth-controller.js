@@ -2,7 +2,7 @@ const AuthService = require('../services/auth-service');
 const ApiError = require('../exceptions/api-error');
 
 const { NODE_ENV } = process.env;
-const { CLIENT_URL, COOKIES_CONFIG } = NODE_ENV === 'production' ? process.env : require('../utils/config');
+const { CLIENT_URL } = NODE_ENV === 'production' ? process.env : require('../utils/config');
 
 class AuthController {
   async register(req, res, next) {
@@ -15,7 +15,9 @@ class AuthController {
         acceptTerms,
       } = req.body;
       const user = await AuthService.register(name, surname, email, password, acceptTerms);
-      res.cookie('refreshToken', user.refreshToken, COOKIES_CONFIG);
+      res.cookie('refreshToken', user.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: 'None',
+      });
       return res.status(201).send(user);
     } catch (err) {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
@@ -38,7 +40,9 @@ class AuthController {
         password,
       } = req.body;
       const user = await AuthService.login(email, password);
-      res.cookie('refreshToken', user.refreshToken, COOKIES_CONFIG);
+      res.cookie('refreshToken', user.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: 'None',
+      });
       return res.status(200).send(user);
     } catch (err) {
       if (err.name === 'ValidationError') {
@@ -74,7 +78,9 @@ class AuthController {
     try {
       const { refreshToken } = req.cookies;
       const userData = await AuthService.refresh(refreshToken);
-      res.cookie('refreshToken', userData.refreshToken, COOKIES_CONFIG);
+      res.cookie('refreshToken', userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: 'None',
+      });
       return res.json(userData);
     } catch (err) {
       next(err);

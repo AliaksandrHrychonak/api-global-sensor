@@ -52,6 +52,9 @@ class UserController {
   async updateVerifyUserPassword(req, res, next) {
     try {
       const user = await UserService.updatePassword(req.user.id, req.body);
+      res.cookie('refreshToken', user.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: 'None',
+      });
       return res.status(200).send(user);
     } catch (err) {
       if (err.name === 'ValidationError') {
