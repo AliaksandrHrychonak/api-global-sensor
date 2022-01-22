@@ -1,11 +1,11 @@
 const {
   Schema,
-  model
+  model,
 } = require('mongoose');
+const bcrypt = require('bcryptjs');
+const isEmail = require('validator/lib/isEmail');
 const ApiError = require('../exceptions/api-error');
-const bcrypt = require('bcrypt');
-const validator = require('validator')
-const isEmail = require('validator/lib/isEmail')
+const errConfig = require('../utils/error-config');
 
 const UserSchema = new Schema({
   name: {
@@ -18,7 +18,7 @@ const UserSchema = new Schema({
     type: String,
     default: 'Surname',
     minlength: 2,
-    maxlength: 30
+    maxlength: 30,
   },
   email: {
     type: String,
@@ -26,16 +26,16 @@ const UserSchema = new Schema({
     unique: true,
     validate: {
       validator: (v) => isEmail(v),
-      message: 'Validation ERR!',
+      message: errConfig.email_error,
     },
   },
   avatar: {
     type: String,
-    default: "https://api-global-sensor.monster/public/avatars/user.png",
-    validate: {
-      validator: (link) => validator.isURL(link, { require_protocol: true }),
-      message: 'Validation ERR!',
-    },
+    default: 'https://api-global-sensor.monster/public/avatars/user.png',
+  },
+  acceptTerms: {
+    type: Boolean,
+    required: true,
   },
   password: {
     type: String,
@@ -43,44 +43,35 @@ const UserSchema = new Schema({
     minlength: 8,
     select: false,
   },
-  roles: [
-    {
-      type: String,
-      ref: 'Role',
-    }
-  ],
+  roles: [{
+    type: String,
+    ref: 'Role',
+  }],
   isActivated: {
     type: Boolean,
-    default: false
+    default: false,
   },
   activationLink: {
-    type: String
-  },
-  resetPasswordData: {
     type: String,
-  },
-  googleId: {
-    type: String,
-  },
-  resetPasswordDataExpires: {
-    type: Date
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
-})
+});
 
-UserSchema.statics.findUserByCredentials = function а(email, password) {
-  return this.findOne({ email }).select('+password')
+UserSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
+  return this.findOne({
+    email,
+  }).select('+password')
     .then((user) => {
       if (!user) {
-        throw ApiError.BadRequest('User not found!')
+        throw ApiError.UnauthorizedError(errConfig.unauthorized_error_credentials);
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw ApiError.BadRequest('Error Access');
+            throw ApiError.UnauthorizedError(errConfig.unauthorized_error_credentials);
           }
           return user;
         });

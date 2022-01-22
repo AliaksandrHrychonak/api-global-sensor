@@ -1,0 +1,11 @@
+{
+  "extends": "airbnb-base",
+  "ignorePatterns": ["user-dto.js", "**/dtos/*.js"],
+  "rules": {
+    "no-underscore-dangle": "off",
+    "no-console": ["error", { "allow": ["log"] }],
+    "linebreak-style": "off",
+    "class-methods-use-this": "off",
+    "consistent-return": "off"
+  }
+}

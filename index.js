@@ -1,71 +1,46 @@
-require('dotenv').config()
-const PORT = process.env.PORT || 5000;
+require('dotenv').config();
+
+const { NODE_ENV } = process.env;
+const { PORT, DB_URL } = NODE_ENV === 'production' ? process.env : require('./utils/config');
 const express = require('express');
-const helmet = require("helmet");
-const { errors } = require('celebrate');
-const cors = require('cors');
-const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose');
-const errorMiddleware = require('./middlewares/error-middleware');
-const { requestLogger, errorLogger } = require('./middlewares/logger')
-const passport = require('passport')
-const i18next = require('i18next');
-const Backend = require('i18next-fs-backend');
-const middleware = require('i18next-http-middleware');
-const router = require('./router');
+const { errors } = require('celebrate');
+const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
+const path = require('path');
+const errorHandler = require('./middlewares/error-handler');
+const corsHandler = require('./middlewares/cors-handler');
+const limiterHandler = require('./middlewares/limiter-handler');
+const { requestLogger, errorLogger } = require('./middlewares/logger-handler');
+const routes = require('./routes');
 
-const app = express()
-app.use(helmet())
-app.use(cors({
-  credentials: true,
-  origin: [
-    'http://globalsensor.pro',
-    'https://globalsensor.pro',
-    'https://localhost:3000',
-    'http://localhost:3000',
-    'http://192.168.100.8:3000',
-  ]
-}));
-app.use(cookieParser());
-require("./service/passport");
+const app = express();
 
-i18next
-  .use(Backend)
-  .use(middleware.LanguageDetector)
-  .init({
-   fallbackLng: 'en',
-   backend: {
-     loadPath: './locales/{{lng}}/translation.json'
-   },
-   preload: ['en', 'ru']
-  })
-
-
-app.use(middleware.handle(i18next));
 app.use(express.json());
-app.use(passport.initialize())
-app.use(requestLogger)
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-app.use('/public', express.static(__dirname + '/public'));
-app.use(router)
+app.use(requestLogger);
+app.use(limiterHandler);
+app.use(helmet());
+app.use(corsHandler);
 
-app.use(errorLogger)
+app.use('/public', express.static(path.join(`${__dirname}/public`)));
+app.use(routes);
 
+app.use(errorLogger);
+app.use(errors());
+app.use(errorHandler);
 
-app.use(errors())
-app.use(errorMiddleware);
-
-const start = async () => {
-    try {
-        await mongoose.connect(process.env.DB_URL, {
-            useUnifiedTopology: true,
-            useCreateIndex: true,
-            useNewUrlParser: true
-        })
-        app.listen(PORT, () => console.log(`Server started on PORT = ${PORT}`))
-    } catch (e) {
-        console.log(e);
-    }
-}
-
-start()
+const startServer = async () => {
+  try {
+    await mongoose.connect(DB_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    app.listen(PORT, () => console.log(`Server start on http://localhost:${PORT}`));
+  } catch (err) {
+    console.log(err);
+  }
+};
+startServer();

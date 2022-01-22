@@ -1,5 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
-const validator = require('validator')
+const validator = require('validator');
 
 const method = (value) => {
   const result = validator.isURL(value);
@@ -16,6 +16,7 @@ module.exports.validateReqister = celebrate({
     avatar: Joi.string().custom(method),
     email: Joi.string().email().required(),
     password: Joi.string().min(8).required(),
+    acceptTerms: Joi.boolean().invalid(false),
   }),
 });
 
@@ -26,7 +27,7 @@ module.exports.validateLogin = celebrate({
   }),
 });
 
-module.exports.forgotPassword= celebrate({
+module.exports.forgotPassword = celebrate({
   body: Joi.object().keys({
     oldPassword: Joi.string().required().min(8),
     newPassword: Joi.string().required().min(8),
@@ -41,10 +42,10 @@ module.exports.validateUpdateMe = celebrate({
   }),
 });
 
-module.exports.validateSendMailInfo = celebrate({
+module.exports.validateFeedbackForm = celebrate({
   body: Joi.object().keys({
     fullname: Joi.string().min(2).max(40).required(),
     email: Joi.string().email().required(),
-    message: Joi.string().min(2).max(400).required()
+    message: Joi.string().min(2).max(400).required(),
   }),
 });
