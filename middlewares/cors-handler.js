@@ -10,14 +10,15 @@ module.exports = (req, res, next) => {
   const {
     origin,
   } = req.headers;
-  if (allowedCors.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Credentials', true);
-  }
-
   const {
     method,
   } = req;
+  if (allowedCors.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Cross-Origin-Resource-Policy', origin);
+    res.header('Access-Control-Allow-Credentials', true);
+  }
+
   const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
   const requestHeaders = req.headers['access-control-request-headers'];
   if (method === 'OPTIONS') {
@@ -26,5 +27,5 @@ module.exports = (req, res, next) => {
     res.status(200).send({ message: 'OK' });
   }
 
-  next();
+  return next();
 };
