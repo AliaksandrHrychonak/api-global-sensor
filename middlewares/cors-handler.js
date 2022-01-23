@@ -7,6 +7,7 @@ const allowedCors = [
 ];
 
 module.exports = (req, res, next) => {
+  res.header('Cross-Origin-Resource-Policy', 'cross-origin');
   const {
     origin,
   } = req.headers;
@@ -15,7 +16,6 @@ module.exports = (req, res, next) => {
   } = req;
   if (allowedCors.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
-    res.header('Cross-Origin-Resource-Policy', 'cross-origin');
     res.header('Access-Control-Allow-Credentials', true);
   }
 
