@@ -25,6 +25,9 @@ app.use(limiterHandler);
 app.use(helmet());
 app.use(cors({
   credentials: true,
+  "preflightContinue": false,
+  "optionsSuccessStatus": 204,
+  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
   origin: [
     'http://globalsensor.pro',
     'https://globalsensor.pro',
