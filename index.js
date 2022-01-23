@@ -32,7 +32,6 @@ app.use(cors({
     'http://localhost:3000',
     'http://localhost:5000',
   ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
 }));
 
 app.use('/public', express.static(path.join(`${__dirname}/public`)));
