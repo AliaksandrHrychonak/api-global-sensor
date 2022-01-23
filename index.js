@@ -8,7 +8,7 @@ const { errors } = require('celebrate');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const path = require('path');
-const cors = require('cors');
+const corsHandler = require('./middlewares/cors-handler');
 const errorHandler = require('./middlewares/error-handler');
 const limiterHandler = require('./middlewares/limiter-handler');
 const { requestLogger, errorLogger } = require('./middlewares/logger-handler');
@@ -23,19 +23,7 @@ app.use(cookieParser());
 app.use(requestLogger);
 app.use(limiterHandler);
 app.use(helmet());
-app.use(cors({
-  credentials: true,
-  "preflightContinue": false,
-  "optionsSuccessStatus": 204,
-  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-  origin: [
-    'http://globalsensor.pro',
-    'https://globalsensor.pro',
-    'https://localhost:3000',
-    'http://localhost:3000',
-    'http://localhost:5000',
-  ],
-}));
+app.use(corsHandler)
 
 app.use('/public', express.static(path.join(__dirname + '/public')));
 app.use(routes);
