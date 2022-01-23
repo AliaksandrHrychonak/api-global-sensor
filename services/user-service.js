@@ -3,6 +3,7 @@ const UserModel = require('../models/user-model');
 const UserDto = require('../dtos/user-dto');
 const ApiError = require('../exceptions/api-error');
 const dtoService = require('./dto-service');
+const errConfig = require('../utils/error-config');
 
 const { NODE_ENV } = process.env;
 const { SALT } = NODE_ENV === 'production' ? process.env : require('../utils/config');
@@ -12,7 +13,7 @@ class UserService {
     const user = await UserModel.findById(id);
     const userDto = new UserDto(user);
     if (!user || !userDto) {
-      throw ApiError.NotFoundError('user_not_found_exception');
+      throw ApiError.BadRequestError(errConfig.user_not_found_exception);
     }
     return userDto;
   }
@@ -24,7 +25,7 @@ class UserService {
       { runValidators: true, new: true },
     );
     if (!userUpdate) {
-      throw ApiError.NotFoundError('user_not_found_exception');
+      throw ApiError.BadRequestError(errConfig.user_not_found_exception);
     }
     const user = new UserDto(userUpdate);
     return user;
@@ -33,12 +34,12 @@ class UserService {
   async updatePassword(id, body) {
     const user = await UserModel.findOne({ id });
     if (!user) {
-      throw ApiError.BadRequestError('user_not_found_exception');
+      throw ApiError.BadRequestError(errConfig.user_not_found_exception);
     }
     const verifyOldPassword = await UserModel.findUserByCredentials(user.email, body.oldPassword);
     if (verifyOldPassword) {
       if (body.newPassword !== body.verifyPassword) {
-        throw ApiError.BadRequestError('user_password_not_match');
+        throw ApiError.UnauthorizedError(errConfig.unauthorized_error_credentials);
       } else if (user && body.newPassword === body.verifyPassword) {
         const hashPassword = await bcrypt.hash(body.newPassword, Number(SALT));
         const newBody = {
@@ -48,12 +49,9 @@ class UserService {
           ...newBody,
         }, { runValidators: true, new: true });
         const userDto = await dtoService.releaseUser(updateUser);
-        if (!userDto) {
-          throw ApiError.NotFoundError('err userDto generate');
-        }
         return userDto;
       } else {
-        throw ApiError.NotFoundError('err server');
+        throw ApiError.BadRequestError(errConfig.user_not_found_exception);
       }
     }
   }
