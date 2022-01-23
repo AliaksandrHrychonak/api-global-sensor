@@ -6,6 +6,7 @@
     "no-console": ["error", { "allow": ["log"] }],
     "linebreak-style": "off",
     "class-methods-use-this": "off",
-    "consistent-return": "off"
+    "consistent-return": "off",
+    "prefer-template": "off",
   }
 }
