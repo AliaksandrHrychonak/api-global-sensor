@@ -15,8 +15,7 @@ module.exports = (req, res, next) => {
   } = req;
   if (allowedCors.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
-    res.header('Cross-Origin-Resource-Policy', 'same-origin');
-    res.header('Cross-Origin-Embedder-Policy', 'require-corp');
+    res.header('Cross-Origin-Resource-Policy', 'same-site');
     res.header('Cross-Origin-Opener-Policy', 'same-origin')
     res.header('Access-Control-Allow-Credentials', true);
   }
