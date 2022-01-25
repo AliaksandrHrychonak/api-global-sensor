@@ -35,6 +35,7 @@ class UserController {
       const body = {
         avatar: `${process.env.API_URL}/public/avatars/${req.file.filename}`,
       };
+      console.log(req.user);
       const user = await UserService.updateUserMe(req.user.id, { ...body });
       return res.status(200).send(user);
     } catch (err) {

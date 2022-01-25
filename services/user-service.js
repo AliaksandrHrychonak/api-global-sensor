@@ -19,7 +19,7 @@ class UserService {
   }
 
   async updateUserMe(id, body) {
-    const userUpdate = await UserModel.findOneAndUpdate(
+    const userUpdate = await UserModel.findByIdAndUpdate(
       id,
       body,
       { runValidators: true, new: true },
@@ -45,7 +45,7 @@ class UserService {
         const newBody = {
           password: hashPassword,
         };
-        const updateUser = await UserModel.findOneAndUpdate(id, {
+        const updateUser = await UserModel.findByIdAndUpdate(id, {
           ...newBody,
         }, { runValidators: true, new: true });
         const userDto = await dtoService.releaseUser(updateUser);
